@@ -11,18 +11,8 @@ namespace Kata20171112_ClockInMirror
         public void Input12_22ShouldReturn11_38()
         {
             //arrange
-            var input = "12:22";
-            var expect = "11:38";
             //act
-            AssertShouldBe(expect, input);
-        }
-
-        private void AssertShouldBe(string expect, string input)
-        {
-            var clockInMirror = new ClockInMirror();
-            var actual = clockInMirror.ConvertToRealTime(input);
-            //assert
-            Assert.AreEqual(expect, actual);
+            AssertShouldBe("11:38", "12:22");
         }
 
         [TestMethod]
@@ -34,15 +24,27 @@ namespace Kata20171112_ClockInMirror
         [TestMethod]
         public void Input5_25ShouldRetrun6_35s()
         {
-            AssertShouldBe("6:35", "5:25");
+            AssertShouldBe("06:35", "05:25");
+        }
+
+        private void AssertShouldBe(string expect, string input)
+        {
+            var clockInMirror = new ClockInMirror();
+            var actual = clockInMirror.ConvertToRealTime(input);
+            //assert
+            Assert.AreEqual(expect, actual);
         }
     }
 
     public class ClockInMirror
     {
-        public String ConvertToRealTime(string input)
+        private int totalHours = 12 * 60;
+
+        private string[] hourMapping = new[]
+            {"12", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
+
+        public string ConvertToRealTime(string input)
         {
-            var totalHours = 12 * 60;
             var hourAndMin = input.Split(':');
             if (hourAndMin[0] == "12")
             {
@@ -50,12 +52,8 @@ namespace Kata20171112_ClockInMirror
             }
             var mirrorHours = Convert.ToInt32(hourAndMin[0]) * 60 + Convert.ToInt32(hourAndMin[1]);
             var realHours = totalHours - mirrorHours;
-            var realHourAndMin = new string[]{ $"{realHours/60}", $"{realHours%60}" };
-            if (realHourAndMin[0] == "12")
-            {
-                return $"00:{realHourAndMin[1]}";
-            }
-            return string.Join( ":", realHourAndMin);
+            var realHourAndMin = new []{ $"{hourMapping[realHours/60]}", $"{(realHours%60):D2}" };
+            return string.Join(":", realHourAndMin);
         }
     }
 }
